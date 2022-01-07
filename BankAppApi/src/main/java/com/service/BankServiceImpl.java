@@ -1,17 +1,23 @@
 package com.service;
 
+import com.dao.TransactionDao;
 import com.dao.UserDao;
 import com.entities.AccountUser;
+import com.entities.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import java.util.Base64;
+import java.util.List;
 
 @Repository
 public class BankServiceImpl implements BankService{
     @Autowired
     UserDao userDao;
+
+    @Autowired
+    TransactionDao transactionDao;
 
     @Override
     public AccountUser login(String email, String password) {
@@ -37,6 +43,16 @@ public class BankServiceImpl implements BankService{
         } catch (DataAccessException e) {
             return null;
         }
+    }
+
+    @Override
+    public List<Transaction> getAllTransactionsByUserId(int userId) {
+        return transactionDao.getTransactionByUserId(userId);
+    }
+
+    @Override
+    public List<Transaction> getAllTransactionsByTransferFrom(int transactionfrom) {
+        return transactionDao.getTransactionByTransferFrom(transactionfrom);
     }
 
     private String encryptPassword(String password) {
