@@ -16,9 +16,32 @@ public class UserDaoImpl implements UserDao{
     JdbcTemplate jdbc;
 
     @Override
-    public AccountUser getUser(String email, String password) throws DataAccessException {
-        final String GET_USER = "SELECT * FROM accountUser WHERE email = ? AND password = ?;";
-        return jdbc.queryForObject(GET_USER, new UserMapper(), email, password);
+    public AccountUser getUser(String email) throws DataAccessException {
+        final String GET_USER = "SELECT * FROM accountUser WHERE email = ?;";
+        return jdbc.queryForObject(GET_USER, new UserMapper(), email);
+    }
+
+    @Override
+    public AccountUser createUser(AccountUser user) throws DataAccessException{
+        try {
+            final String INSERT_NEW_USER = "INSERT INTO accountUser (firstName, lastName, email, phoneNumber, address, password) " +
+                    "VALUES (?, ?, ?, ?, ?, ?) RETURNING userId;";
+
+            int id = jdbc.queryForObject(INSERT_NEW_USER, Integer.class,
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getEmail(),
+                    user.getPhoneNumber(),
+                    user.getAddress(),
+                    user.getPassword()
+            );
+
+            user.setUserId(id);
+
+            return user;
+        } catch (NullPointerException e) {
+            return null;
+        }
     }
 
     private static final class UserMapper implements RowMapper<AccountUser> {
