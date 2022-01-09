@@ -1,0 +1,78 @@
+package com.dao;
+
+import com.entities.Account;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
+
+
+@Component("savingAccountDaoImpl")
+public class SavingAccountDaoImpl implements AccountDao{
+
+    @Autowired
+    JdbcTemplate jdbc;
+    @Override
+    public Account createAccount(Account account) {
+
+        try {
+            final String INSERT_NEW_SAVING_ACCOUNT = "INSERT INTO savingaccount (savingaccountnumber,userid) " +
+                    "VALUES (?, ?);";
+           jdbc.update(INSERT_NEW_SAVING_ACCOUNT,account.getAccountNumber(),account.getUserId());
+           return account;
+        }catch (NullPointerException ex){
+            return null;
+        }
+    }
+
+    @Override
+    public List<Account> getAccountsForUser(int userId) {
+        final String SELECT_Investment = "SELECT * FROM savingaccount where userid = ?;";
+        return jdbc.query(SELECT_Investment, new accountMapper());
+    }
+
+    @Override
+    public Account getAccount(int accountNumber) {
+        final String SELECT_Investment = "SELECT * FROM savingaccount where savingaccountnumber = ?;";
+        return jdbc.queryForObject(SELECT_Investment, new accountMapper());
+    }
+
+    @Override
+    public Account updateAccount(Account account) {
+        try {
+            final String UPDATE_SAVING_ACCOUNT = "UPDATE savingaccount set userid = ? , balance = ?  " +
+                    "where savingaccountnumber = ? " +
+                    "VALUES (?, ?, ? );";
+            jdbc.update(UPDATE_SAVING_ACCOUNT,account.getUserId(),account.getBalance(),account.getAccountNumber());
+            return account;
+        }catch (NullPointerException ex){
+            return null;
+        }
+    }
+
+    @Override
+    public Account deleteAccount(Account account) {
+
+        try {
+            final String DELETE_SAVING_ACCOUNT = "DELETE FROM savingaccount where savingaccountnumber = ? ;";
+            jdbc.update(DELETE_SAVING_ACCOUNT,account.getAccountNumber());
+            return account;
+        }catch (NullPointerException ex){
+            return null;
+        }
+    }
+
+    public static final class accountMapper implements RowMapper<Account> {
+        public Account mapRow(ResultSet resultSet, int i) throws SQLException {
+            Account account=new Account();
+            account.setAccountNumber(resultSet.getInt("savingaccountnumber"));
+            account.setUserId(resultSet.getInt("userid"));
+            account.setBalance(resultSet.getBigDecimal("balance"));
+            return account;
+        }
+    }
+}
