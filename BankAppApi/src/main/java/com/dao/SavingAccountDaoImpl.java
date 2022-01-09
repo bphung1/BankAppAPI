@@ -2,6 +2,7 @@ package com.dao;
 
 import com.entities.Account;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -20,36 +21,43 @@ public class SavingAccountDaoImpl implements AccountDao{
     public Account createAccount(Account account) {
 
         try {
-            final String INSERT_NEW_SAVING_ACCOUNT = "INSERT INTO savingaccount (savingaccountnumber,userid) " +
+            final String INSERT_NEW_SAVING_ACCOUNT = "INSERT INTO savingaccount (accountnumber,userid) " +
                     "VALUES (?, ?);";
            jdbc.update(INSERT_NEW_SAVING_ACCOUNT,account.getAccountNumber(),account.getUserId());
            return account;
-        }catch (NullPointerException ex){
+        }catch (NullPointerException | DataAccessException ex){
             return null;
         }
     }
 
     @Override
     public List<Account> getAccountsForUser(int userId) {
-        final String SELECT_Investment = "SELECT * FROM savingaccount where userid = ?;";
-        return jdbc.query(SELECT_Investment, new accountMapper());
+        final String SELECT_SAVING_ACCOUNT = "SELECT * FROM savingaccount where userid = ?;";
+        try {
+            return jdbc.query(SELECT_SAVING_ACCOUNT, new accountMapper(),userId);
+        }catch (DataAccessException ex){
+            return null;
+         }
     }
 
     @Override
     public Account getAccount(int accountNumber) {
-        final String SELECT_Investment = "SELECT * FROM savingaccount where savingaccountnumber = ?;";
-        return jdbc.queryForObject(SELECT_Investment, new accountMapper());
+        final String SELECT_Investment = "SELECT * FROM savingaccount where accountnumber = ?;";
+        try {
+            return jdbc.queryForObject(SELECT_Investment, new accountMapper(),accountNumber);
+        }catch (DataAccessException ex){
+            return null;
+        }
     }
 
     @Override
     public Account updateAccount(Account account) {
         try {
-            final String UPDATE_SAVING_ACCOUNT = "UPDATE savingaccount set userid = ? , balance = ?  " +
-                    "where savingaccountnumber = ? " +
-                    "VALUES (?, ?, ? );";
-            jdbc.update(UPDATE_SAVING_ACCOUNT,account.getUserId(),account.getBalance(),account.getAccountNumber());
+            final String UPDATE_SAVING_ACCOUNT = "UPDATE savingaccount set  balance = ? where accountnumber = ? ;" ;
+
+            jdbc.update(UPDATE_SAVING_ACCOUNT,account.getBalance(),account.getAccountNumber());
             return account;
-        }catch (NullPointerException ex){
+        }catch (NullPointerException | DataAccessException ex){
             return null;
         }
     }
@@ -58,18 +66,33 @@ public class SavingAccountDaoImpl implements AccountDao{
     public Account deleteAccount(Account account) {
 
         try {
-            final String DELETE_SAVING_ACCOUNT = "DELETE FROM savingaccount where savingaccountnumber = ? ;";
+            final String DELETE_SAVING_ACCOUNT = "DELETE FROM savingaccount where accountnumber = ? ;";
             jdbc.update(DELETE_SAVING_ACCOUNT,account.getAccountNumber());
             return account;
-        }catch (NullPointerException ex){
+        }catch (NullPointerException | DataAccessException ex){
             return null;
+        }
+    }
+
+    @Override
+    public boolean checkAccountNumber(int accountNumber) {
+        final String SELECT_ACCOUNT_NUMBER = "SELECT accountNumber FROM checkingAccount " +
+                "UNION " +
+                "SELECT accountNumber FROM savingAccount;";
+
+        List<Integer> accountNums = jdbc.queryForList(SELECT_ACCOUNT_NUMBER, Integer.class);
+
+        if(accountNums.contains(accountNumber)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
     public static final class accountMapper implements RowMapper<Account> {
         public Account mapRow(ResultSet resultSet, int i) throws SQLException {
             Account account=new Account();
-            account.setAccountNumber(resultSet.getInt("savingaccountnumber"));
+            account.setAccountNumber(resultSet.getInt("accountnumber"));
             account.setUserId(resultSet.getInt("userid"));
             account.setBalance(resultSet.getBigDecimal("balance"));
             return account;
