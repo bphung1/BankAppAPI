@@ -1,25 +1,17 @@
 package com.service;
 
-import com.dao.AccountDao;
 import com.dao.UserDao;
-import com.entities.Account;
 import com.entities.AccountUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import java.util.Base64;
-import java.util.List;
 
 @Repository
 public class BankServiceImpl implements BankService{
     @Autowired
     UserDao userDao;
-
-    @Autowired
-    @Qualifier("savingAccountDaoImpl")
-    AccountDao savingAccountDao;
 
     @Override
     public AccountUser login(String email, String password) {
@@ -47,31 +39,6 @@ public class BankServiceImpl implements BankService{
         }
     }
 
-    @Override
-    public Account createSavingAccount() {
-        return null;
-    }
-
-    @Override
-    public List<Account> getAllSavingAccountForUser(int userId) {
-        return savingAccountDao.getAccountsForUser(userId);
-    }
-
-    @Override
-    public Account getSavingAccountForUser(int accountNumber) {
-        return savingAccountDao.getAccount(accountNumber);
-    }
-
-    @Override
-    public Account updateSavingAccount(Account account) {
-        return savingAccountDao.updateAccount(account);
-    }
-
-    @Override
-    public Account deleteSavingAccount(Account account) {
-        return savingAccountDao.deleteAccount(account);
-    }
-
     private String encryptPassword(String password) {
         Base64.Encoder encoder = Base64.getEncoder();
         return encoder.encodeToString(password.getBytes());
@@ -82,6 +49,4 @@ public class BankServiceImpl implements BankService{
         byte[] bytes = decoder.decode(encryptedPassword);
         return new String(bytes);
     }
-
-
 }
