@@ -37,6 +37,7 @@ public class BankServiceImpl implements BankService{
         }
     }
 
+    //TODO: Bao - add this createCheckingAccount/savingAccount when creating a user
     @Override
     public AccountUser createUser(AccountUser user) {
         try {
@@ -48,7 +49,6 @@ public class BankServiceImpl implements BankService{
             return null;
         }
     }
-
 
     @Override
     public Account createCheckingAccount(int userId) {
@@ -82,6 +82,7 @@ public class BankServiceImpl implements BankService{
         }
     }
 
+    //TODO: Tyler - withdraw/deposit/transfer instead of one update
     @Override
     public Account updateCheckingAccount(Account account) {
         try {

@@ -27,7 +27,7 @@ public class CheckingAcctController extends BaseController{
     public ResponseEntity<List<Account>> getAllCheckingAccountsForUser(@PathVariable int userId) {
         List<Account> checkAccts = service.getAllCheckingAccountsForUser(userId);
 
-        if(checkAccts == null) {
+        if(checkAccts.isEmpty()) {
             return new ResponseEntity("No checking accounts found for User #" + userId, HttpStatus.NOT_FOUND);
         } else {
             return ResponseEntity.ok(checkAccts);
