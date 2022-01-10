@@ -9,7 +9,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
+import javax.xml.crypto.Data;
 import java.util.Base64;
+import java.util.List;
 import java.util.Random;
 
 @Repository
@@ -47,6 +49,7 @@ public class BankServiceImpl implements BankService{
         }
     }
 
+
     @Override
     public Account createCheckingAccount(int userId) {
         try {
@@ -59,6 +62,42 @@ public class BankServiceImpl implements BankService{
             return null;
         }
 
+    }
+
+    @Override
+    public Account getCheckingAccount(int accountNumber) {
+        try {
+            return checkingAccountDao.getAccount(accountNumber);
+        } catch (DataAccessException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<Account> getAllCheckingAccountsForUser(int userId) {
+        try {
+            return checkingAccountDao.getAccountsForUser(userId);
+        } catch (DataAccessException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Account updateCheckingAccount(Account account) {
+        try {
+            return checkingAccountDao.updateAccount(account);
+        } catch (DataAccessException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Account deleteCheckingAccount(Account account) {
+        try {
+            return checkingAccountDao.deleteAccount(account);
+        } catch (DataAccessException e) {
+            return null;
+        }
     }
 
     private int generateAccountNumber() {
