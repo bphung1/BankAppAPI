@@ -24,9 +24,28 @@ public class TransactionDaoImpl implements TransactionDao{
 
     @Override
     public List<Transaction> getTransactionByTransferFrom(int transactionfrom)throws DataAccessException {
-        final String SELECT_ALL = "select * from usertransaction where transactionfrom = ?;";
+        final String SELECT_ALL = "SELECT * FROM usertransaction WHERE transactionfrom = ?;";
 
-        return jdbc.query(SELECT_ALL,new TransactionMapper(),transactionfrom);
+        return jdbc.query(SELECT_ALL, new TransactionMapper(), transactionfrom);
+    }
+
+    @Override
+    public Transaction addTransaction(Transaction transaction) {
+
+        final String ADD_TRANSACTION = "INSERT INTO usertransaction(userid, transactionamount,transactionfrom," +
+                "transactionto,transactiontimestamp) VALUES (?,?,?,?,?);";
+        jdbc.update(ADD_TRANSACTION,
+                transaction.getUserId(),
+                transaction.getTransactionAmount(),
+                transaction.getTransactionfrom(),
+                transaction.getTransactionto(),
+                transaction.getTransactionTimeStamp()
+        );
+
+        int newId = jdbc.queryForObject("SELECT LAST_INSERT_ID();", Integer.class);
+        transaction.setTransactionId(newId);
+
+        return transaction;
     }
 
     public static final class TransactionMapper implements RowMapper<Transaction> {
