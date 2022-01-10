@@ -1,6 +1,7 @@
 package com.controller;
 
 import com.entities.Account;
+import com.service.AccountType;
 import com.service.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,9 +47,21 @@ public class CheckingAcctController extends BaseController{
         }
     }
 
-    @PutMapping("/checkingAccount/update")
-    public ResponseEntity<Account> updateCheckingAccount(@RequestBody Account account) {
-        account = service.updateCheckingAccount(account);
+    @PutMapping("/checkingAccount/withdraw")
+    public ResponseEntity<Account> withdrawFromCheckingAccount(@RequestBody Account account) {
+        account = service.withdrawFromAccount(account, AccountType.CHECKING);
+
+        if(account == null) {
+            return new ResponseEntity("Could not update account.", HttpStatus.BAD_REQUEST);
+        } else {
+            return ResponseEntity.ok(account);
+        }
+
+    }
+
+    @PutMapping("/checkingAccount/deposit")
+    public ResponseEntity<Account> depositToCheckingAccount(@RequestBody Account account) {
+        account = service.depositToAccount(account, AccountType.CHECKING);
 
         if(account == null) {
             return new ResponseEntity("Could not update account.", HttpStatus.BAD_REQUEST);

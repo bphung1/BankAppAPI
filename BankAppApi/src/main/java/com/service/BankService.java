@@ -3,6 +3,7 @@ package com.service;
 import com.entities.Account;
 import com.entities.AccountUser;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface BankService {
@@ -12,6 +13,8 @@ public interface BankService {
     Account createCheckingAccount(int userId);
     Account getCheckingAccount(int accountNumber);
     List<Account> getAllCheckingAccountsForUser(int userId);
-    Account updateCheckingAccount(Account account);
     Account deleteCheckingAccount(Account account);
+
+    Account withdrawFromAccount(Account accountFromWithdrawal, AccountType accType);
+    Account depositToAccount(Account accountFromDeposit, AccountType accType);
 }

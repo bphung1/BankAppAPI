@@ -10,6 +10,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
 import javax.xml.crypto.Data;
+import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.List;
 import java.util.Random;
@@ -82,15 +83,68 @@ public class BankServiceImpl implements BankService{
         }
     }
 
-    //TODO: Tyler - withdraw/deposit/transfer instead of one update
     @Override
-    public Account updateCheckingAccount(Account account) {
+    public Account withdrawFromAccount(Account accountFromWithdrawal, AccountType accType) {
+
         try {
-            return checkingAccountDao.updateAccount(account);
+
+            switch(accType) {
+                case CHECKING:
+
+                    Account accountFromDao = checkingAccountDao.getAccount(accountFromWithdrawal.getAccountNumber());
+                    BigDecimal withdrawalAmount = accountFromWithdrawal.getBalance();
+                    if (checkWithdrawAmount(accountFromDao, withdrawalAmount)) {
+                        accountFromDao.setBalance(accountFromDao.getBalance().subtract(withdrawalAmount));
+                        accountFromDao = checkingAccountDao.updateAccount(accountFromDao);
+                        return accountFromDao;
+                    } else { return null; }
+
+
+                case SAVING:
+
+                    //TODO: Hatim - put savings account dao methods
+
+                default:
+                    return null;
+            }
+
+        } catch (DataAccessException e) {
+            return null;
+        }
+
+    }
+
+    @Override
+    public Account depositToAccount(Account accountFromDeposit, AccountType accType) {
+
+        try {
+
+            switch(accType) {
+                case CHECKING:
+
+                    Account accountFromDao = checkingAccountDao.getAccount(accountFromDeposit.getAccountNumber());
+                    BigDecimal depositAmount = accountFromDeposit.getBalance();
+                    if (checkIfNegativeAmount(depositAmount)) {
+                        accountFromDao.setBalance(accountFromDao.getBalance().add(depositAmount));
+                        accountFromDao = checkingAccountDao.updateAccount(accountFromDao);
+                        return accountFromDao;
+                    } else { return null; }
+
+                case SAVING:
+
+                    //TODO: Hatim - put savings account dao methods
+
+                default:
+                    return null;
+            }
+
         } catch (DataAccessException e) {
             return null;
         }
     }
+
+
+    //TODO: Tyler - withdraw/deposit/transfer instead of one update
 
     @Override
     public Account deleteCheckingAccount(Account account) {
@@ -112,6 +166,21 @@ public class BankServiceImpl implements BankService{
         return generatedAccountNumber;
     }
 
+    private boolean checkWithdrawAmount(Account accountFromDao, BigDecimal withdrawAmount) {
+        if(!checkIfNegativeAmount(withdrawAmount) && accountFromDao.getBalance().compareTo(withdrawAmount) >= 0) {
+            return true; //GOOD
+        } else {
+            return false; //NOT GOOD
+        }
+    }
+
+    private boolean checkIfNegativeAmount(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            return true; //NOT GOOD
+        } else {
+            return false; //GOOD
+        }
+    }
 
 
     private String encryptPassword(String password) {
