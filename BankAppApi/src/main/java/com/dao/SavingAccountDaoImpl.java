@@ -76,11 +76,9 @@ public class SavingAccountDaoImpl implements AccountDao{
 
     @Override
     public boolean checkAccountNumber(int accountNumber) {
-        final String SELECT_ACCOUNT_NUMBER = "SELECT accountNumber FROM checkingAccount " +
-                "UNION " +
-                "SELECT accountNumber FROM savingAccount;";
+        final String SELECT_ACCOUNT_NUMBER = "SELECT accountNumber FROM checkingAccount where accountNumber=? ;";
 
-        List<Integer> accountNums = jdbc.queryForList(SELECT_ACCOUNT_NUMBER, Integer.class);
+        List<Integer> accountNums = jdbc.queryForList(SELECT_ACCOUNT_NUMBER, Integer.class,accountNumber);
 
         if(accountNums.contains(accountNumber)) {
             return true;

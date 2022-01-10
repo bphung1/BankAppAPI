@@ -120,7 +120,8 @@ public class BankServiceImpl implements BankService{
         Random rand = new Random();
 
         int generatedAccountNumber = rand.nextInt(899999) + 100000;
-        while(checkingAccountDao.checkAccountNumber(generatedAccountNumber)) {
+        while(checkingAccountDao.checkAccountNumber(generatedAccountNumber)
+                || savingAccountDao.checkAccountNumber(generatedAccountNumber) ) {
             generatedAccountNumber = rand.nextInt(899999) + 100000;
         }
 
