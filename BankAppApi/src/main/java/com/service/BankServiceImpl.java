@@ -3,12 +3,14 @@ package com.service;
 import com.dao.AccountDao;
 import com.dao.UserDao;
 import com.entities.Account;
+import com.entities.AccountType;
 import com.entities.AccountUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
 import java.util.Base64;
 import java.util.List;
 import java.util.Random;
@@ -116,6 +118,73 @@ public class BankServiceImpl implements BankService{
 
     }
 
+    @Override
+    public Account withdrawFromAccount(Account accountFromWithdrawal, AccountType accType) {
+        try {
+
+            BigDecimal withdrawalAmount = accountFromWithdrawal.getBalance();
+
+            switch(accType) {
+                case CHECKING:
+
+                    Account accountFromDao = checkingAccountDao.getAccount(accountFromWithdrawal.getAccountNumber());
+                    if (checkWithdrawAmount(accountFromDao, withdrawalAmount)) {
+                        accountFromDao.setBalance(accountFromDao.getBalance().subtract(withdrawalAmount));
+                        accountFromDao = checkingAccountDao.updateAccount(accountFromDao);
+                        return accountFromDao;
+                    } else { return null; }
+
+
+                case SAVING:
+                    Account savingAccountFromDao = savingAccountDao.getAccount(accountFromWithdrawal.getAccountNumber());
+                    if (checkWithdrawAmount(savingAccountFromDao, withdrawalAmount)) {
+                        savingAccountFromDao.setBalance(savingAccountFromDao.getBalance().subtract(withdrawalAmount));
+                        savingAccountFromDao  = savingAccountDao.updateAccount(savingAccountFromDao);
+                        return savingAccountFromDao;
+                    } else { return null; }
+
+                default:
+                    return null;
+            }
+
+        } catch (DataAccessException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public Account depositToAccount(Account accountFromDeposit, AccountType accType) {
+        try {
+            BigDecimal depositAmount = accountFromDeposit.getBalance();
+
+            switch(accType) {
+                case CHECKING:
+
+                    Account accountFromDao = checkingAccountDao.getAccount(accountFromDeposit.getAccountNumber());
+                    if (checkIfNegativeAmount(depositAmount)) {
+                        accountFromDao.setBalance(accountFromDao.getBalance().add(depositAmount));
+                        accountFromDao = checkingAccountDao.updateAccount(accountFromDao);
+                        return accountFromDao;
+                    } else { return null; }
+
+                case SAVING:
+
+                    Account savingaccountFromDao = savingAccountDao.getAccount(accountFromDeposit.getAccountNumber());
+                    if (checkIfNegativeAmount(depositAmount)) {
+                        savingaccountFromDao.setBalance(savingaccountFromDao.getBalance().add(depositAmount));
+                        savingaccountFromDao = savingAccountDao.updateAccount(savingaccountFromDao);
+                        return savingaccountFromDao;
+                    } else { return null; }
+
+                default:
+                    return null;
+            }
+
+        } catch (DataAccessException e) {
+            return null;
+        }
+    }
+
     private int generateAccountNumber() {
         Random rand = new Random();
 
@@ -129,6 +198,21 @@ public class BankServiceImpl implements BankService{
     }
 
 
+    private boolean checkWithdrawAmount(Account accountFromDao, BigDecimal withdrawAmount) {
+        if(!checkIfNegativeAmount(withdrawAmount) && accountFromDao.getBalance().compareTo(withdrawAmount) >= 0) {
+            return true; //GOOD
+        } else {
+            return false; //NOT GOOD
+        }
+    }
+
+    private boolean checkIfNegativeAmount(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            return true; //NOT GOOD
+        } else {
+            return false; //GOOD
+        }
+    }
 
     private String encryptPassword(String password) {
         Base64.Encoder encoder = Base64.getEncoder();
