@@ -99,7 +99,6 @@ public class BankServiceImpl implements BankService{
                         return accountFromDao;
                     } else { return null; }
 
-
                 case SAVING:
 
                     //TODO: Hatim - put savings account dao methods
@@ -124,7 +123,7 @@ public class BankServiceImpl implements BankService{
 
                     Account accountFromDao = checkingAccountDao.getAccount(accountFromDeposit.getAccountNumber());
                     BigDecimal depositAmount = accountFromDeposit.getBalance();
-                    if (checkIfNegativeAmount(depositAmount)) {
+                    if (!checkIfNegativeAmount(depositAmount)) {
                         accountFromDao.setBalance(accountFromDao.getBalance().add(depositAmount));
                         accountFromDao = checkingAccountDao.updateAccount(accountFromDao);
                         return accountFromDao;
