@@ -32,7 +32,7 @@ public class SavingAccountDaoImpl implements AccountDao{
 
     @Override
     public List<Account> getAccountsForUser(int userId) {
-        final String SELECT_SAVING_ACCOUNT = "SELECT * FROM savingaccount where userid = ?;";
+        final String SELECT_SAVING_ACCOUNT = "SELECT * FROM savingaccount WHERE userid = ?;";
         try {
             return jdbc.query(SELECT_SAVING_ACCOUNT, new accountMapper(),userId);
         }catch (DataAccessException ex){
@@ -42,7 +42,8 @@ public class SavingAccountDaoImpl implements AccountDao{
 
     @Override
     public Account getAccount(int accountNumber) {
-        final String SELECT_Investment = "SELECT * FROM savingaccount where accountnumber = ?;";
+
+        final String SELECT_Investment = "SELECT * FROM savingaccount WHERE accountnumber = ?;";
         try {
             return jdbc.queryForObject(SELECT_Investment, new accountMapper(),accountNumber);
         }catch (DataAccessException ex){
@@ -52,9 +53,9 @@ public class SavingAccountDaoImpl implements AccountDao{
 
     @Override
     public Account updateAccount(Account account) {
-        try {
-            final String UPDATE_SAVING_ACCOUNT = "UPDATE savingaccount set  balance = ? where accountnumber = ? ;" ;
 
+        try {
+            final String UPDATE_SAVING_ACCOUNT = "UPDATE savingaccount SET  balance = ? WHERE accountnumber = ? ;" ;
             jdbc.update(UPDATE_SAVING_ACCOUNT,account.getBalance(),account.getAccountNumber());
             return account;
         }catch (NullPointerException | DataAccessException ex){
@@ -66,7 +67,7 @@ public class SavingAccountDaoImpl implements AccountDao{
     public Account deleteAccount(Account account) {
 
         try {
-            final String DELETE_SAVING_ACCOUNT = "DELETE FROM savingaccount where accountnumber = ? ;";
+            final String DELETE_SAVING_ACCOUNT = "DELETE FROM savingaccount WHERE accountnumber = ? ;";
             jdbc.update(DELETE_SAVING_ACCOUNT,account.getAccountNumber());
             return account;
         }catch (NullPointerException | DataAccessException ex){
@@ -76,7 +77,8 @@ public class SavingAccountDaoImpl implements AccountDao{
 
     @Override
     public boolean checkAccountNumber(int accountNumber) {
-        final String SELECT_ACCOUNT_NUMBER = "SELECT accountNumber FROM checkingAccount where accountNumber=? ;";
+
+        final String SELECT_ACCOUNT_NUMBER = "SELECT accountNumber FROM checkingAccount WHERE accountNumber=? ;";
 
         List<Integer> accountNums = jdbc.queryForList(SELECT_ACCOUNT_NUMBER, Integer.class,accountNumber);
 
