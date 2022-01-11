@@ -161,7 +161,7 @@ public class BankServiceImpl implements BankService{
                 case CHECKING:
 
                     Account accountFromDao = checkingAccountDao.getAccount(accountFromDeposit.getAccountNumber());
-                    if (checkIfNegativeAmount(depositAmount)) {
+                    if (!checkIfNegativeAmount(depositAmount)) {
                         accountFromDao.setBalance(accountFromDao.getBalance().add(depositAmount));
                         accountFromDao = checkingAccountDao.updateAccount(accountFromDao);
                         return accountFromDao;
@@ -170,7 +170,7 @@ public class BankServiceImpl implements BankService{
                 case SAVING:
 
                     Account savingaccountFromDao = savingAccountDao.getAccount(accountFromDeposit.getAccountNumber());
-                    if (checkIfNegativeAmount(depositAmount)) {
+                    if (!checkIfNegativeAmount(depositAmount)) {
                         savingaccountFromDao.setBalance(savingaccountFromDao.getBalance().add(depositAmount));
                         savingaccountFromDao = savingAccountDao.updateAccount(savingaccountFromDao);
                         return savingaccountFromDao;
