@@ -32,18 +32,17 @@ public class TransactionDaoImpl implements TransactionDao{
     @Override
     public Transaction addTransaction(Transaction transaction) {
 
-        final String ADD_TRANSACTION = "INSERT INTO usertransaction(userid, transactionamount,transactionfrom," +
-                "transactionto,transactiontimestamp) VALUES (?,?,?,?,?);";
-        jdbc.update(ADD_TRANSACTION,
+        final String ADD_TRANSACTION = "INSERT INTO usertransaction(userid, transactionamount, transactionfrom," +
+                "transactionto, transactiontimestamp) VALUES (?,?,?,?,?) RETURN userid;";
+        int id = jdbc.queryForObject(ADD_TRANSACTION, Integer.class,
                 transaction.getUserId(),
                 transaction.getTransactionAmount(),
                 transaction.getTransactionfrom(),
                 transaction.getTransactionto(),
-                transaction.getTransactionTimeStamp()
+                transaction.getTransactionTimeStamp() //may not need to include in add method?
         );
 
-        int newId = jdbc.queryForObject("SELECT LAST_INSERT_ID();", Integer.class);
-        transaction.setTransactionId(newId);
+        transaction.setTransactionId(id);
 
         return transaction;
     }
