@@ -57,7 +57,7 @@ public class BankServiceImpl implements BankService{
             Account newAccount = new Account();
             newAccount.setUserId(userId);
             newAccount.setAccountNumber(generateAccountNumber());
-
+            newAccount.setBalance(new BigDecimal("0.00"));
             return checkingAccountDao.createAccount(newAccount);
         } catch (DataAccessException e) {
             return null;
@@ -101,8 +101,6 @@ public class BankServiceImpl implements BankService{
 
                 case SAVING:
 
-                    //TODO: Hatim - put savings account dao methods
-
                 default:
                     return null;
             }
@@ -131,8 +129,6 @@ public class BankServiceImpl implements BankService{
 
                 case SAVING:
 
-                    //TODO: Hatim - put savings account dao methods
-
                 default:
                     return null;
             }
@@ -141,9 +137,6 @@ public class BankServiceImpl implements BankService{
             return null;
         }
     }
-
-
-    //TODO: Tyler - withdraw/deposit/transfer instead of one update
 
     @Override
     public Account deleteCheckingAccount(Account account) {
