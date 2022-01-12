@@ -39,7 +39,6 @@ public class TransactionDaoImpl implements TransactionDao{
                 transaction.getTransactionAmount(),
                 transaction.getTransactionfrom(),
                 transaction.getTransactionto(),
-//                transaction.getTransactionTimeStamp(),//may not need to include in add method?
                 transaction.getDescription()
         );
 
