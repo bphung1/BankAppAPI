@@ -1,12 +1,14 @@
 package com.controller;
 
 import com.entities.Account;
+import com.entities.AccountType;
 import com.service.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -44,14 +46,16 @@ public class SavingAccountController extends BaseController{
     }
 
     //TODO: remove and replace with withdraw/deposit
-    @PutMapping("/savingaccount/update")
-    public ResponseEntity<Account> updateSavingAccount(@RequestBody Account account){
-            Account account1=bankService.updateSavingAccount(account);
-            if(account==null) {
-                return new ResponseEntity("could not update account", HttpStatus.NOT_FOUND);
-            }else {
-                return ResponseEntity.ok(account1);
-            }
+    @PutMapping("/savingaccount/deposit/{accountNumber}")
+    public ResponseEntity<Account> depositSavingAccount(@PathVariable int accountNumber,@RequestParam BigDecimal amount){
+        Account accountFromService=bankService.getSavingAccountForUser(accountNumber);
+        if (accountFromService==null){
+            return new ResponseEntity("Account not found ",HttpStatus.NOT_FOUND);
+        }
+        Account account=bankService.depositToAccount(accountFromService, AccountType.SAVING);
+
+
+
     }
 
     @DeleteMapping("/savingaccount/delete/{accountNumber}")
