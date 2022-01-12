@@ -11,16 +11,18 @@ public class Transaction {
     private BigDecimal transactionAmount;
     private int transactionfrom;
     private int transactionto;
-    private Timestamp transactionTimeStamp;
-    private String description;
+    private LocalDateTime transactionTimeStamp;
 
-    public Timestamp getTransactionTimeStamp() {
+    public LocalDateTime getTransactionTimeStamp() {
         return transactionTimeStamp;
     }
 
-    public void setTransactionTimeStamp(Timestamp transactionTimeStamp) {
+    public void setTransactionTimeStamp(LocalDateTime transactionTimeStamp) {
         this.transactionTimeStamp = transactionTimeStamp;
     }
+
+    private String description;
+
 
     public int getTransactionId() {
         return transactionId;

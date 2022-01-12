@@ -6,9 +6,12 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 @Repository
 public class TransactionDaoImpl implements TransactionDao{
@@ -30,10 +33,13 @@ public class TransactionDaoImpl implements TransactionDao{
     }
 
     @Override
+    @Transactional
     public Transaction addTransaction(Transaction transaction) {
 
         final String ADD_TRANSACTION = "INSERT INTO usertransaction(userid, transactionamount, transactionfrom," +
                 "transactionto, description) VALUES (?,?,?,?,?) RETURNING userid;";
+        final String GET_TIMESTAMP = "SELECT transactionTimeStamp FROM userTransaction WHERE transactionId = ?;";
+
         int id = jdbc.queryForObject(ADD_TRANSACTION, Integer.class,
                 transaction.getUserId(),
                 transaction.getTransactionAmount(),
@@ -42,7 +48,10 @@ public class TransactionDaoImpl implements TransactionDao{
                 transaction.getDescription()
         );
 
+        Timestamp transactionTime = jdbc.queryForObject(GET_TIMESTAMP, Timestamp.class, id);
+
         transaction.setTransactionId(id);
+        transaction.setTransactionTimeStamp(transactionTime.toLocalDateTime());
 
         return transaction;
     }
@@ -57,7 +66,7 @@ public class TransactionDaoImpl implements TransactionDao{
             transaction.setTransactionfrom(resultSet.getInt("transactionfrom"));
             transaction.setTransactionto(resultSet.getInt("transactionto"));
             transaction.setTransactionAmount(resultSet.getBigDecimal("transactionAmount"));
-            transaction.setTransactionTimeStamp(resultSet.getTimestamp("transactionTimeStamp"));
+            transaction.setTransactionTimeStamp(resultSet.getTimestamp("transactionTimeStamp").toLocalDateTime());
             transaction.setDescription(resultSet.getString("description"));
             return transaction;
         }

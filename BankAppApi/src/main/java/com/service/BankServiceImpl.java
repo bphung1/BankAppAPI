@@ -70,7 +70,36 @@ public class BankServiceImpl implements BankService{
     public List<Transaction> getAllTransactionsByTransferFrom(int transactionfrom) {
         return transactionDao.getTransactionByTransferFrom(transactionfrom);
     }
-      
+
+    @Override
+    public Transaction transferMoney(Transaction transaction) {
+        try {
+            Account checkingAccountFrom = checkIfCheckingAccountExist(transaction.getTransactionfrom());
+            Account savingAccountFrom = checkIfSavingAccountExist(transaction.getTransactionfrom());
+            Account checkingAccountTo = checkIfCheckingAccountExist(transaction.getTransactionto());
+            Account savingAccountTo = checkIfSavingAccountExist(transaction.getTransactionto());
+            BigDecimal amount = transaction.getTransactionAmount();
+
+            if (checkingAccountFrom != null && checkingAccountTo != null) {
+                checkingToCheckingAccount(checkingAccountFrom, checkingAccountTo, amount);
+                return saveTransaction(transaction);
+            } else if (savingAccountFrom != null && checkingAccountTo != null) {
+                savingToCheckingAccount(savingAccountFrom, checkingAccountTo, amount);
+                return saveTransaction(transaction);
+            } else if (checkingAccountFrom != null && savingAccountTo != null) {
+                checkingToSavingAccount(checkingAccountFrom, savingAccountTo, amount);
+                return saveTransaction(transaction);
+            } else if (savingAccountFrom != null && savingAccountTo != null) {
+                savingToSavingAccount(savingAccountFrom, savingAccountTo, amount);
+                return saveTransaction(transaction);
+            } else {
+                return null;
+            }
+        } catch (DataAccessException | NullPointerException e) {
+            return null;
+        }
+    }
+
     @Override
     public List<Account> getAllSavingAccountForUser(int userId) {
          try {
@@ -225,6 +254,55 @@ public class BankServiceImpl implements BankService{
         }
     }
 
+    private void checkingToCheckingAccount(Account from, Account to, BigDecimal amount) {
+        from.setBalance(from.getBalance().subtract(amount));
+        to.setBalance(to.getBalance().add(amount));
+        checkingAccountDao.updateAccount(from);
+        checkingAccountDao.updateAccount(to);
+    }
+
+    private void checkingToSavingAccount(Account from, Account to, BigDecimal amount) {
+        from.setBalance(from.getBalance().subtract(amount));
+        to.setBalance(to.getBalance().add(amount));
+        checkingAccountDao.updateAccount(from);
+        savingAccountDao.updateAccount(to);
+    }
+
+    private void savingToSavingAccount(Account from, Account to, BigDecimal amount) {
+        from.setBalance(from.getBalance().subtract(amount));
+        to.setBalance(to.getBalance().add(amount));
+        savingAccountDao.updateAccount(from);
+        savingAccountDao.updateAccount(to);
+    }
+
+    private void savingToCheckingAccount(Account from, Account to, BigDecimal amount) {
+        from.setBalance(from.getBalance().subtract(amount));
+        to.setBalance(to.getBalance().add(amount));
+        savingAccountDao.updateAccount(from);
+        checkingAccountDao.updateAccount(to);
+    }
+
+    private Transaction saveTransaction(Transaction transaction) {
+        Transaction newTransaction = createTransaction(transaction, "transfer");
+        return transactionDao.addTransaction(newTransaction);
+    }
+
+    private Account checkIfCheckingAccountExist(int accountNumber) {
+        try {
+            return checkingAccountDao.getAccount(accountNumber);
+        } catch (DataAccessException | NullPointerException e) {
+            return null;
+        }
+    }
+
+    private Account checkIfSavingAccountExist(int accountNumber) {
+        try {
+            return savingAccountDao.getAccount(accountNumber);
+        } catch (DataAccessException | NullPointerException e) {
+            return null;
+        }
+    }
+
     private Transaction createTransaction(Account account, String description, BigDecimal amount) {
         Transaction newTransaction = new Transaction();
         newTransaction.setUserId(account.getUserId());
@@ -235,6 +313,15 @@ public class BankServiceImpl implements BankService{
         return newTransaction;
     }
 
+    private Transaction createTransaction(Transaction transaction, String description) {
+        Transaction newTransaction = new Transaction();
+        newTransaction.setUserId(transaction.getUserId());
+        newTransaction.setTransactionAmount(transaction.getTransactionAmount());
+        newTransaction.setTransactionfrom(transaction.getTransactionfrom());
+        newTransaction.setTransactionto(transaction.getTransactionto());
+        newTransaction.setDescription(description);
+        return newTransaction;
+    }
 
     private int generateAccountNumber() {
         Random rand = new Random();

@@ -29,4 +29,6 @@ public interface BankService {
   
     List<Transaction> getAllTransactionsByUserId(int userId);
     List<Transaction> getAllTransactionsByTransferFrom(int transactionfrom);
+
+    Transaction transferMoney(Transaction transaction);
 }

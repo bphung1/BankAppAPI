@@ -2,14 +2,12 @@ package com.controller;
 
 import com.dto.LoginParam;
 import com.entities.AccountUser;
+import com.entities.Transaction;
 import com.service.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController extends BaseController {
@@ -32,5 +30,14 @@ public class UserController extends BaseController {
             return new ResponseEntity("Fail to create new account", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(user);
+    }
+
+    @PostMapping("/transfer")
+    public ResponseEntity<Transaction> transferMoney(@RequestBody Transaction transaction) {
+        Transaction newTransaction = service.transferMoney(transaction);
+        if (newTransaction == null) {
+            return new ResponseEntity("Transaction failed.", HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(newTransaction);
     }
 }
