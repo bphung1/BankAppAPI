@@ -2,6 +2,7 @@ package com.dao;
 
 import com.entities.Account;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -31,14 +32,14 @@ public class CheckingAccountDaoImpl implements AccountDao{
     }
 
     @Override
-    public List<Account> getAccountsForUser(int userId) {
+    public List<Account> getAccountsForUser(int userId) throws DataAccessException {
         final String GET_ACCOUNTS_FOR_USER = "SELECT * from checkingAccount WHERE userId = ?;";
 
         return jdbc.query(GET_ACCOUNTS_FOR_USER, new CheckingAccountMapper(), userId);
     }
 
     @Override
-    public Account getAccount(int accountNumber) {
+    public Account getAccount(int accountNumber) throws DataAccessException {
         final String GET_ACCOUNT = "SELECT * from checkingAccount WHERE accountNumber = ?;";
 
         return jdbc.queryForObject(GET_ACCOUNT, new CheckingAccountMapper(), accountNumber);
@@ -65,10 +66,10 @@ public class CheckingAccountDaoImpl implements AccountDao{
     @Override
     public boolean checkAccountNumber(int accountNumber) {
 
-        final String SELECT_ACCOUNT_NUMBER = "SELECT accountNumber FROM checkingAccount where accountNumber = ? ;";
+        final String SELECT_ACCOUNT_NUMBER = "SELECT accountNumber FROM checkingAccount " +
+                "WHERE accountNumber = ?;";
 
-
-        List<Integer> accountNums = jdbc.queryForList(SELECT_ACCOUNT_NUMBER, Integer.class,accountNumber);
+        List<Integer> accountNums = jdbc.queryForList(SELECT_ACCOUNT_NUMBER, Integer.class, accountNumber);
 
         if(accountNums.contains(accountNumber)) {
             return true;
