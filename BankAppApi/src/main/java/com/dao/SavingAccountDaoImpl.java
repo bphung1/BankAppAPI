@@ -55,8 +55,8 @@ public class SavingAccountDaoImpl implements AccountDao{
     public Account updateAccount(Account account) {
 
         try {
-            final String UPDATE_SAVING_ACCOUNT = "UPDATE savingaccount SET  balance = ? WHERE accountnumber = ? RETURN userId;" ;
-            int id = jdbc.update(UPDATE_SAVING_ACCOUNT,account.getBalance(),account.getAccountNumber());
+            final String UPDATE_SAVING_ACCOUNT = "UPDATE savingaccount SET balance = ? WHERE accountnumber = ? RETURNING userId;" ;
+            int id = jdbc.queryForObject(UPDATE_SAVING_ACCOUNT, Integer.class, account.getBalance(), account.getAccountNumber());
             account.setUserId(id);
             return account;
         }catch (NullPointerException | DataAccessException ex){
