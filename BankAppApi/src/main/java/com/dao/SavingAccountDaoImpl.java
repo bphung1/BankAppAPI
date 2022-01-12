@@ -21,9 +21,9 @@ public class SavingAccountDaoImpl implements AccountDao{
     public Account createAccount(Account account) {
 
         try {
-            final String INSERT_NEW_SAVING_ACCOUNT = "INSERT INTO savingaccount (accountnumber,userid) " +
+            final String INSERT_NEW_SAVING_ACCOUNT = "INSERT INTO savingaccount (accountnumber, userid) " +
                     "VALUES (?, ?);";
-           jdbc.update(INSERT_NEW_SAVING_ACCOUNT,account.getAccountNumber(),account.getUserId());
+           jdbc.update(INSERT_NEW_SAVING_ACCOUNT, account.getAccountNumber(), account.getUserId());
            return account;
         }catch (NullPointerException | DataAccessException ex){
             return null;
@@ -34,7 +34,7 @@ public class SavingAccountDaoImpl implements AccountDao{
     public List<Account> getAccountsForUser(int userId) {
         final String SELECT_SAVING_ACCOUNT = "SELECT * FROM savingaccount WHERE userid = ?;";
         try {
-            return jdbc.query(SELECT_SAVING_ACCOUNT, new accountMapper(),userId);
+            return jdbc.query(SELECT_SAVING_ACCOUNT, new accountMapper(), userId);
         }catch (DataAccessException ex){
             return null;
          }
@@ -45,7 +45,7 @@ public class SavingAccountDaoImpl implements AccountDao{
 
         final String SELECT_Investment = "SELECT * FROM savingaccount WHERE accountnumber = ?;";
         try {
-            return jdbc.queryForObject(SELECT_Investment, new accountMapper(),accountNumber);
+            return jdbc.queryForObject(SELECT_Investment, new accountMapper(), accountNumber);
         }catch (DataAccessException ex){
             return null;
         }
@@ -68,8 +68,8 @@ public class SavingAccountDaoImpl implements AccountDao{
     public Account deleteAccount(Account account) {
 
         try {
-            final String DELETE_SAVING_ACCOUNT = "DELETE FROM savingaccount WHERE accountnumber = ? ;";
-            jdbc.update(DELETE_SAVING_ACCOUNT,account.getAccountNumber());
+            final String DELETE_SAVING_ACCOUNT = "DELETE FROM savingaccount WHERE accountnumber = ?;";
+            jdbc.update(DELETE_SAVING_ACCOUNT, account.getAccountNumber());
             return account;
         }catch (NullPointerException | DataAccessException ex){
             return null;
@@ -81,7 +81,7 @@ public class SavingAccountDaoImpl implements AccountDao{
 
         final String SELECT_ACCOUNT_NUMBER = "SELECT accountNumber FROM checkingAccount WHERE accountNumber=? ;";
 
-        List<Integer> accountNums = jdbc.queryForList(SELECT_ACCOUNT_NUMBER, Integer.class,accountNumber);
+        List<Integer> accountNums = jdbc.queryForList(SELECT_ACCOUNT_NUMBER, Integer.class, accountNumber);
 
         if(accountNums.contains(accountNumber)) {
             return true;
@@ -92,7 +92,7 @@ public class SavingAccountDaoImpl implements AccountDao{
 
     public static final class accountMapper implements RowMapper<Account> {
         public Account mapRow(ResultSet resultSet, int i) throws SQLException {
-            Account account=new Account();
+            Account account = new Account();
             account.setAccountNumber(resultSet.getInt("accountnumber"));
             account.setUserId(resultSet.getInt("userid"));
             account.setBalance(resultSet.getBigDecimal("balance"));
