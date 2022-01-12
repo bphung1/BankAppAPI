@@ -17,7 +17,7 @@ public class TransactionDaoImpl implements TransactionDao{
 
     @Override
     public List<Transaction> getTransactionByUserId(int userId) throws DataAccessException {
-        final String SELECT_ALL = "select * from usertransaction where userId = ?;";
+        final String SELECT_ALL = "SELECT * FROM usertransaction WHERE userId = ?;";
 
         return jdbc.query(SELECT_ALL,new TransactionMapper(),userId);
     }
