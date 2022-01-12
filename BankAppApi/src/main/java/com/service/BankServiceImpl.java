@@ -47,7 +47,6 @@ public class BankServiceImpl implements BankService{
         }
     }
 
-    //TODO: Bao - add this createCheckingAccount/savingAccount when creating a user
     @Override
     public AccountUser createUser(AccountUser user) {
         try {
@@ -158,6 +157,8 @@ public class BankServiceImpl implements BankService{
                     if (checkWithdrawAmount(accountFromDao, withdrawalAmount)) {
                         accountFromDao.setBalance(accountFromDao.getBalance().subtract(withdrawalAmount));
                         accountFromDao = checkingAccountDao.updateAccount(accountFromDao);
+                        Transaction transaction = createTransaction(accountFromDao, "withdraw", withdrawalAmount);
+                        transactionDao.addTransaction(transaction);
                         return accountFromDao;
                     } else { return null; }
 
@@ -166,6 +167,8 @@ public class BankServiceImpl implements BankService{
                     if (checkWithdrawAmount(savingAccountFromDao, withdrawalAmount)) {
                         savingAccountFromDao.setBalance(savingAccountFromDao.getBalance().subtract(withdrawalAmount));
                         savingAccountFromDao = savingAccountDao.updateAccount(savingAccountFromDao);
+                        Transaction transaction = createTransaction(savingAccountFromDao, "withdraw", withdrawalAmount);
+                        transactionDao.addTransaction(transaction);
                         return savingAccountFromDao;
                     } else { return null; }
 
@@ -190,15 +193,19 @@ public class BankServiceImpl implements BankService{
                     if (!checkIfNegativeAmount(depositAmount)) {
                         accountFromDao.setBalance(accountFromDao.getBalance().add(depositAmount));
                         accountFromDao = checkingAccountDao.updateAccount(accountFromDao);
+                        Transaction transaction = createTransaction(accountFromDao, "deposit", depositAmount);
+                        transactionDao.addTransaction(transaction);
                         return accountFromDao;
                     } else { return null; }
 
                 case SAVING:
-                    Account savingaccountFromDao = savingAccountDao.getAccount(accountFromDeposit.getAccountNumber());
+                    Account savingAccountFromDao = savingAccountDao.getAccount(accountFromDeposit.getAccountNumber());
                     if (!checkIfNegativeAmount(depositAmount)) {
-                        savingaccountFromDao.setBalance(savingaccountFromDao.getBalance().add(depositAmount));
-                        savingaccountFromDao = savingAccountDao.updateAccount(savingaccountFromDao);
-                        return savingaccountFromDao;
+                        savingAccountFromDao.setBalance(savingAccountFromDao.getBalance().add(depositAmount));
+                        savingAccountFromDao = savingAccountDao.updateAccount(savingAccountFromDao);
+                        Transaction transaction = createTransaction(savingAccountFromDao, "deposit", depositAmount);
+                        transactionDao.addTransaction(transaction);
+                        return savingAccountFromDao;
                     } else { return null; }
                 
                 default:
@@ -217,6 +224,17 @@ public class BankServiceImpl implements BankService{
             return null;
         }
     }
+
+    private Transaction createTransaction(Account account, String description, BigDecimal amount) {
+        Transaction newTransaction = new Transaction();
+        newTransaction.setUserId(account.getUserId());
+        newTransaction.setTransactionAmount(amount);
+        newTransaction.setTransactionfrom(account.getAccountNumber());
+        newTransaction.setTransactionto(account.getAccountNumber());
+        newTransaction.setDescription(description);
+        return newTransaction;
+    }
+
 
     private int generateAccountNumber() {
         Random rand = new Random();

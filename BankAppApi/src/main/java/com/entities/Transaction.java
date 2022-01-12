@@ -6,25 +6,13 @@ import java.time.LocalDateTime;
 
 public class Transaction {
 
-        private int transactionId;
-        private int userId;
-        private BigDecimal transactionAmount;
-        private int transactionfrom;
-        private int transactionto;
-        private Timestamp transactionTimeStamp;
-
-    public Transaction() {
-    }
-
-
-    public Transaction(int transactionId, int userId, BigDecimal transactionAmount, int transactionfrom, int transactionto, Timestamp transactionTimeStamp) {
-        this.transactionId = transactionId;
-        this.userId = userId;
-        this.transactionAmount = transactionAmount;
-        this.transactionfrom = transactionfrom;
-        this.transactionto = transactionto;
-        this.transactionTimeStamp = transactionTimeStamp;
-    }
+    private int transactionId;
+    private int userId;
+    private BigDecimal transactionAmount;
+    private int transactionfrom;
+    private int transactionto;
+    private Timestamp transactionTimeStamp;
+    private String description;
 
     public Timestamp getTransactionTimeStamp() {
         return transactionTimeStamp;
@@ -72,6 +60,14 @@ public class Transaction {
 
     public void setTransactionto(int transactionto) {
         this.transactionto = transactionto;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

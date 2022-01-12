@@ -33,13 +33,14 @@ public class TransactionDaoImpl implements TransactionDao{
     public Transaction addTransaction(Transaction transaction) {
 
         final String ADD_TRANSACTION = "INSERT INTO usertransaction(userid, transactionamount, transactionfrom," +
-                "transactionto, transactiontimestamp) VALUES (?,?,?,?,?) RETURN userid;";
+                "transactionto, description) VALUES (?,?,?,?,?) RETURNING userid;";
         int id = jdbc.queryForObject(ADD_TRANSACTION, Integer.class,
                 transaction.getUserId(),
                 transaction.getTransactionAmount(),
                 transaction.getTransactionfrom(),
                 transaction.getTransactionto(),
-                transaction.getTransactionTimeStamp() //may not need to include in add method?
+//                transaction.getTransactionTimeStamp(),//may not need to include in add method?
+                transaction.getDescription()
         );
 
         transaction.setTransactionId(id);
@@ -58,6 +59,7 @@ public class TransactionDaoImpl implements TransactionDao{
             transaction.setTransactionto(resultSet.getInt("transactionto"));
             transaction.setTransactionAmount(resultSet.getBigDecimal("transactionAmount"));
             transaction.setTransactionTimeStamp(resultSet.getTimestamp("transactionTimeStamp"));
+            transaction.setDescription(resultSet.getString("description"));
             return transaction;
         }
     }

@@ -47,9 +47,11 @@ public class CheckingAccountDaoImpl implements AccountDao{
 
     @Override
     public Account updateAccount(Account account) {
-        final String UPDATE_ACCOUNT = "UPDATE checkingAccount SET balance = ? WHERE accountNumber = ?;";
+        final String UPDATE_ACCOUNT = "UPDATE checkingAccount SET balance = ? WHERE accountNumber = ? RETURNING userId;";
 
-        jdbc.update(UPDATE_ACCOUNT, account.getBalance(), account.getAccountNumber());
+        int id = jdbc.queryForObject(UPDATE_ACCOUNT, Integer.class, account.getBalance(), account.getAccountNumber());
+
+        account.setUserId(id);
 
         return account;
     }
