@@ -88,15 +88,6 @@ public class BankServiceImpl implements BankService{
     }
 
     @Override
-    public Account updateSavingAccount(Account account) {
-        try {
-            return savingAccountDao.updateAccount(account);
-        }catch (DataAccessException ex){
-            return null;
-        }
-    }
-
-    @Override
     public Account deleteSavingAccount(Account account) {
         try {
             return savingAccountDao.deleteAccount(account);
@@ -139,13 +130,13 @@ public class BankServiceImpl implements BankService{
 
     @Override
     public Account withdrawFromAccount(Account accountFromWithdrawal, AccountType accType) {
-
         try {
+            BigDecimal withdrawalAmount = accountFromWithdrawal.getBalance();
+
             switch(accType) {
                 case CHECKING:
 
                     Account accountFromDao = checkingAccountDao.getAccount(accountFromWithdrawal.getAccountNumber());
-                    BigDecimal withdrawalAmount = accountFromWithdrawal.getBalance();
                     if (checkWithdrawAmount(accountFromDao, withdrawalAmount)) {
                         accountFromDao.setBalance(accountFromDao.getBalance().subtract(withdrawalAmount));
                         accountFromDao = checkingAccountDao.updateAccount(accountFromDao);
@@ -171,14 +162,13 @@ public class BankServiceImpl implements BankService{
 
     @Override
     public Account depositToAccount(Account accountFromDeposit, AccountType accType) {
-
-
         try {
+            BigDecimal depositAmount = accountFromDeposit.getBalance();
+
             switch(accType) {
                 case CHECKING:
 
                     Account accountFromDao = checkingAccountDao.getAccount(accountFromDeposit.getAccountNumber());
-                    BigDecimal depositAmount = accountFromDeposit.getBalance();
                     if (!checkIfNegativeAmount(depositAmount)) {
                         accountFromDao.setBalance(accountFromDao.getBalance().add(depositAmount));
                         accountFromDao = checkingAccountDao.updateAccount(accountFromDao);
@@ -220,22 +210,6 @@ public class BankServiceImpl implements BankService{
         }
 
         return generatedAccountNumber;
-    }
-
-    private boolean checkWithdrawAmount(Account accountFromDao, BigDecimal withdrawAmount) {
-        if(!checkIfNegativeAmount(withdrawAmount) && accountFromDao.getBalance().compareTo(withdrawAmount) >= 0) {
-            return true; //GOOD
-        } else {
-            return false; //NOT GOOD
-        }
-    }
-
-    private boolean checkIfNegativeAmount(BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            return true; //NOT GOOD
-        } else {
-            return false; //GOOD
-        }
     }
 
     private boolean checkWithdrawAmount(Account accountFromDao, BigDecimal withdrawAmount) {

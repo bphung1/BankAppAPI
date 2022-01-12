@@ -1,7 +1,7 @@
 package com.controller;
 
 import com.entities.Account;
-import com.service.AccountType;
+import com.entities.AccountType;
 import com.service.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
