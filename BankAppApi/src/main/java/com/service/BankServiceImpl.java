@@ -54,6 +54,8 @@ public class BankServiceImpl implements BankService{
             user.setPassword(encryptPassword(user.getPassword()));
             AccountUser newUser = userDao.createUser(user);
             newUser.setPassword("HIDDEN");
+            createCheckingAccount(newUser.getUserId());
+            createSavingAccount(newUser.getUserId());
             return newUser;
         } catch (DataAccessException e) {
             return null;
