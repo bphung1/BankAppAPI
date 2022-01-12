@@ -3,6 +3,9 @@ package com.service;
 import com.entities.Account;
 import com.entities.AccountType;
 import com.entities.AccountUser;
+import com.entities.Transaction;
+
+import java.util.List;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -23,4 +26,7 @@ public interface BankService {
     Account getSavingAccountForUser(int accountNumber);
     Account createSavingAccount(int userId);
     Account deleteSavingAccount(Account account);
+  
+    List<Transaction> getAllTransactionsByUserId(int userId);
+    List<Transaction> getAllTransactionsByTransferFrom(int transactionfrom);
 }

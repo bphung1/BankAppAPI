@@ -1,10 +1,12 @@
 package com.service;
 
+import com.dao.TransactionDao;
 import com.dao.AccountDao;
 import com.dao.UserDao;
 import com.entities.Account;
 import com.entities.AccountType;
 import com.entities.AccountUser;
+import com.entities.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -21,8 +23,12 @@ public class BankServiceImpl implements BankService{
     UserDao userDao;
 
     @Autowired
+    TransactionDao transactionDao;
+  
+    @Autowired
     @Qualifier("checkingAccount")
     AccountDao checkingAccountDao;
+  
     @Autowired
     @Qualifier("savingAccountDaoImpl")
     AccountDao savingAccountDao;
@@ -54,6 +60,15 @@ public class BankServiceImpl implements BankService{
         }
     }
 
+    @Override
+    public List<Transaction> getAllTransactionsByUserId(int userId) {
+        return transactionDao.getTransactionByUserId(userId);
+    }
+
+    @Override
+    public List<Transaction> getAllTransactionsByTransferFrom(int transactionfrom) {
+        return transactionDao.getTransactionByTransferFrom(transactionfrom);
+      
     @Override
     public List<Account> getAllSavingAccountForUser(int userId) {
          try {
