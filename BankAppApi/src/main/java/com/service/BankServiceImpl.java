@@ -68,6 +68,7 @@ public class BankServiceImpl implements BankService{
     @Override
     public List<Transaction> getAllTransactionsByTransferFrom(int transactionfrom) {
         return transactionDao.getTransactionByTransferFrom(transactionfrom);
+    }
       
     @Override
     public List<Account> getAllSavingAccountForUser(int userId) {

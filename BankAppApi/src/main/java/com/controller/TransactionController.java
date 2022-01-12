@@ -21,7 +21,7 @@ public class TransactionController extends BaseController {
 
         List<Transaction> transactions = service.getAllTransactionsByUserId(userId);
 
-        if(transactions == null) {
+        if(transactions.isEmpty()) {
             return new ResponseEntity("Transaction not found.", HttpStatus.NOT_FOUND);
         }
 
@@ -32,7 +32,7 @@ public class TransactionController extends BaseController {
     public ResponseEntity<List<Transaction>> getTransactionByTransferFrom(@PathVariable int transactionfrom){
 
         List<Transaction> transactions = service.getAllTransactionsByTransferFrom(transactionfrom);
-        if(transactions == null) {
+        if(transactions.isEmpty()) {
             return new ResponseEntity("Transaction not found.", HttpStatus.NOT_FOUND);
         }
 
