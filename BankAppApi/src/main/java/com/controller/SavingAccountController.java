@@ -40,7 +40,7 @@ public class SavingAccountController extends BaseController{
     public ResponseEntity<Account> getUserSavingAccount(@PathVariable int accountNumber){
         Account account = bankService.getSavingAccountForUser(accountNumber);
          if(account == null) {
-             return new ResponseEntity("user account not found", HttpStatus.NOT_FOUND);
+             return new ResponseEntity("User account not found", HttpStatus.NOT_FOUND);
          }
           return ResponseEntity.ok(account);
     }

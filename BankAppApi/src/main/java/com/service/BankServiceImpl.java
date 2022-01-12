@@ -79,8 +79,8 @@ public class BankServiceImpl implements BankService{
             int num = generateAccountNumber();
             account.setAccountNumber(num);
             account.setUserId(userId);
-            Account account1 = savingAccountDao.createAccount(account);
-            return account1;
+            account.setBalance(new BigDecimal("0.00"));
+            return savingAccountDao.createAccount(account);
         }catch (DataAccessException  ex){
             return null;
         }
@@ -134,12 +134,11 @@ public class BankServiceImpl implements BankService{
                         return accountFromDao;
                     } else { return null; }
 
-
                 case SAVING:
                     Account savingAccountFromDao = savingAccountDao.getAccount(accountFromWithdrawal.getAccountNumber());
                     if (checkWithdrawAmount(savingAccountFromDao, withdrawalAmount)) {
                         savingAccountFromDao.setBalance(savingAccountFromDao.getBalance().subtract(withdrawalAmount));
-                        savingAccountFromDao  = savingAccountDao.updateAccount(savingAccountFromDao);
+                        savingAccountFromDao = savingAccountDao.updateAccount(savingAccountFromDao);
                         return savingAccountFromDao;
                     } else { return null; }
 
@@ -147,7 +146,7 @@ public class BankServiceImpl implements BankService{
                     return null;
             }
 
-        } catch (DataAccessException e) {
+        } catch (DataAccessException | NullPointerException e) {
             return null;
         }
     }
@@ -180,7 +179,7 @@ public class BankServiceImpl implements BankService{
                     return null;
             }
 
-        } catch (DataAccessException e) {
+        } catch (DataAccessException | NullPointerException e) {
             return null;
         }
     }
