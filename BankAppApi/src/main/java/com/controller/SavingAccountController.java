@@ -45,17 +45,26 @@ public class SavingAccountController extends BaseController{
           return ResponseEntity.ok(account);
     }
 
-    //TODO: remove and replace with withdraw/deposit
-    @PutMapping("/savingaccount/deposit/{accountNumber}")
-    public ResponseEntity<Account> depositSavingAccount(@PathVariable int accountNumber,@RequestParam BigDecimal amount){
-        Account accountFromService=bankService.getSavingAccountForUser(accountNumber);
-        if (accountFromService==null){
-            return new ResponseEntity("Account not found ",HttpStatus.NOT_FOUND);
+    @PutMapping("/savingaccount/deposit")
+    public ResponseEntity<Account> depositSavingAccount(@RequestBody Account account){
+
+        Account accountFromService=bankService.depositToAccount(account,AccountType.SAVING);
+
+        if (accountFromService == null){
+            return new ResponseEntity("Could not deposit to account ",HttpStatus.NOT_FOUND);
         }
-        Account account=bankService.depositToAccount(accountFromService, AccountType.SAVING);
+        return ResponseEntity.ok(accountFromService);
+    }
 
+    @PutMapping("/savingaccount/withdraw")
+    public ResponseEntity<Account> withdrawSavingAccount(@RequestBody Account account){
 
+        Account accountFromService=bankService.withdrawFromAccount(account,AccountType.SAVING);
 
+        if (accountFromService == null){
+            return new ResponseEntity("Could not withdraw to account  ",HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(accountFromService);
     }
 
     @DeleteMapping("/savingaccount/delete/{accountNumber}")
