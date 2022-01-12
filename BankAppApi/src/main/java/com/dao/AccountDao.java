@@ -10,4 +10,5 @@ public interface AccountDao {
     Account getAccount(int accountNumber);
     Account updateAccount(Account account);
     Account deleteAccount(Account account);
+    boolean checkAccountNumber(int accountNumber);
 }
