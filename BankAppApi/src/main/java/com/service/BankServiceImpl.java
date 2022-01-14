@@ -184,13 +184,6 @@ public class BankServiceImpl implements BankService{
                 case CHECKING:
 
                     Account accountFromDao = checkingAccountDao.getAccount(accountFromWithdrawal.getAccountNumber());
-//                    if (checkTransactionAmount(accountFromDao, withdrawalAmount)) {
-//                        accountFromDao.setBalance(accountFromDao.getBalance().subtract(withdrawalAmount));
-//                        accountFromDao = checkingAccountDao.updateAccount(accountFromDao);
-//                        Transaction transaction = createTransaction(accountFromDao, "withdraw", withdrawalAmount);
-//                        transactionDao.addTransaction(transaction);
-//                        return accountFromDao;
-//                    } else { return null; }
 
                     if (!checkIfNegativeAmount(withdrawalAmount) && accountFromDao.getBalance().compareTo(BigDecimal.ZERO) >= 0) {
                         accountFromDao.setBalance(accountFromDao.getBalance().subtract(withdrawalAmount));
