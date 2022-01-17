@@ -13,11 +13,11 @@ public class UserController extends BaseController {
     @Autowired
     BankService service;
 
-    @PostMapping("/login")
+    @PostMapping("/getUser")
     public ResponseEntity<AccountUser> login(@RequestBody LoginParam param) {
-        AccountUser user = service.login(param.getEmail(), param.getPassword());
+        AccountUser user = service.getUserByEmail(param.getEmail());
         if (user == null) {
-            return new ResponseEntity("Wrong username or password", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("Cannot find user.", HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(user);
     }

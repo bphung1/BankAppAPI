@@ -4,7 +4,7 @@ import com.dao.TransactionDao;
 import com.dao.AccountDao;
 import com.dao.UserDao;
 import com.entities.Account;
-import com.entities.AccountType;
+import com.dto.AccountType;
 import com.entities.AccountUser;
 import com.entities.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +34,12 @@ public class BankServiceImpl implements BankService{
     AccountDao savingAccountDao;
 
     @Override
-    public AccountUser login(String email, String password) {
+    public AccountUser getUserByEmail(String email) {
         try {
             AccountUser user = userDao.getUser(email);
-            if (password.equals(decryptPassword(user.getPassword()))) {
-                user.setPassword("HIDDEN");
-                return user;
-            }
-            return null;
-        } catch (DataAccessException e) {
+            user.setPassword("HIDDEN");
+            return user;
+        } catch (DataAccessException | NullPointerException e) {
             return null;
         }
     }
