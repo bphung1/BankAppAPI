@@ -1,17 +1,14 @@
 package com.service;
 
 import com.entities.Account;
-import com.entities.AccountType;
+import com.dto.AccountType;
 import com.entities.AccountUser;
 import com.entities.Transaction;
 
 import java.util.List;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 public interface BankService {
-    AccountUser login(String email, String password);
+    AccountUser getUserByEmail(String email);
     AccountUser createUser(AccountUser user);
   
     Account createCheckingAccount(int userId);
