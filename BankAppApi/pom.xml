@@ -99,6 +99,20 @@
             <version>1.18.10</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- add Add the Spring Security and JWT dependencies -->
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
     </dependencies>
 
 </project>
