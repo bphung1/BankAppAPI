@@ -1,7 +1,7 @@
 package com.entities;
 
 public class AccountUser {
-    private int userId;
+        private int userId;
     private String firstName;
     private String lastName;
     private String email;
